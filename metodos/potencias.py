@@ -22,11 +22,9 @@ class metodo_potencia:
         print(f"autovetor_error: {error_autovetor}")
         error_valor =np.abs(self.get_microk() - autovalor[autovalor.size - 1])
         print(f"autovalor_error: {error_valor}")
-        print(autovalor)
-        print(autovalor[autovalor.size - 1])
-        print(autovalor[autovalor.size - 2])
         print(np.power(autovalor[autovalor.size - 2]/autovalor[autovalor.size - 1], self.itmax))
 
     def get_autovetor_autovalor(self):
         lambdas, autovetores = np.linalg.eig(self.matriz)
+        lambdas = np.sort(np.abs(lambdas))
         return lambdas, autovetores
