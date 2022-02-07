@@ -23,7 +23,10 @@ def main():
 	A = np.array([[-2, -4, 2], [-2, 1, 2], [4, 2, 5]])
 	metodo = metodo_potencia(vector_x0, A, 10)
 	valor, vetor = metodo.get_autovetor_autovalor()
-	print(metodo.get_microk())
+	print(valor[valor.size - 1])
+	#print(metodo.get_microk())
+	print(metodo.autovalor_autovetor_error())
+	print()
 	pass
 if __name__ == '__main__':
 	main()

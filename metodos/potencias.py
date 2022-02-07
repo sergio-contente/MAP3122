@@ -16,6 +16,16 @@ class metodo_potencia:
         A_xk = np.dot(self.matriz, self.x_k)
         microk = np.dot(xk_t, A_xk)/np.dot(xk_t, self.x_k)
         return microk
+    def autovalor_autovetor_error(self):
+        autovalor, autovetor = self.get_autovetor_autovalor()
+        error_autovetor = np.linalg.norm(self.get_xk() - autovetor)
+        print(f"autovetor_error: {error_autovetor}")
+        error_valor =np.abs(self.get_microk() - autovalor[autovalor.size - 1])
+        print(f"autovalor_error: {error_valor}")
+        print(autovalor)
+        print(autovalor[autovalor.size - 1])
+        print(autovalor[autovalor.size - 2])
+        print(np.power(autovalor[autovalor.size - 2]/autovalor[autovalor.size - 1], self.itmax))
 
     def get_autovetor_autovalor(self):
         lambdas, autovetores = np.linalg.eig(self.matriz)
