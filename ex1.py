@@ -7,6 +7,9 @@ def plot_aproximations(iterations, error_autovalor, error_autovetor, error_assin
 
 
 def main():
+	x_values = []
+	error_values = []
+	assint_values = []
 	list_x0 = []
 	list_B = []
 	itmax = np.random.randint(30, 71)
@@ -24,7 +27,14 @@ def main():
 	A = np.array([[-2, -4, 2], [-2, 1, 2], [4, 2, 5]])
 	metodo = metodo_potencia(vector_x0, A, itmax, 10)
 	for i in range(1, itmax):
-		metodo.autovalor_autovetor_error()
+		x_values.append(i)
+		error_values.append(metodo.autovalor_autovetor_error())
+	assint_values = metodo.get_assintotico()
+	print(x_values)
+	print(assint_values)
+	plt.yscale("log")
+	plt.plot(x_values, assint_values)
+	plt.show()
 	#valor, vetor = metodo.get_autovetor_autovalor()
 	#print(metodo.get_microk())
 	pass
