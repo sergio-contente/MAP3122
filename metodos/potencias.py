@@ -18,13 +18,15 @@ class metodo_potencia:
         return microk
     def autovalor_autovetor_error(self):
         autovalor, autovetor = self.get_autovetor_autovalor()
-        error_autovetor = np.linalg.norm(self.get_xk() - autovetor)
+        error_autovetor = np.linalg.norm(self.get_xk() - autovetor[autovalor.size - 1])
+        print(autovetor[autovalor.size - 1])
         #print(f"iterator: {self.itmax}")
         #print(f"autovetor_error: {error_autovetor}")
-        error_valor =np.abs(self.get_microk() - np.round(autovalor[autovalor.size - 1]))
+        error_autovalor =np.abs(self.get_microk() - np.round(autovalor[autovalor.size - 1]))
+        #error_autovalor_list = error_autovalor.tolist()
         #print(f"autovalor_error: {error_valor}")
         #print(f"microk: {self.get_microk()}")
-        return error_valor
+        return error_autovalor, error_autovetor
 
     def get_assintotico(self):
         vetor = []

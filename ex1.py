@@ -8,8 +8,8 @@ def plot_aproximations(iterations, error_autovalor, error_autovetor, error_assin
 
 def main():
 	x_values = []
-	error_values = []
-	assint_values = []
+	error_autovalor = []
+	error_autovetor = []
 	list_x0 = []
 	list_B = []
 	itmax = np.random.randint(30, 71)
@@ -28,14 +28,27 @@ def main():
 	metodo = metodo_potencia(vector_x0, A, itmax, 10)
 	for i in range(1, itmax):
 		x_values.append(i)
-		error_values.append(metodo.autovalor_autovetor_error())
+		autovalor, autovetor = metodo.autovalor_autovetor_error()
+		autovalor = autovalor.reshape(-1)
+		autovetor = autovetor.reshape(-1)
+		#print(type(autovalor))
+		#list_autovalor = autovalor.tolist()
+		#print(type(list_autovalor))
+		#list(list_autovalor)
+		#print(list_autovalor)
+		error_autovalor.append(autovalor)
+		error_autovetor.append(autovetor)
 	assint_values = metodo.get_assintotico()
-	print(x_values)
-	print(assint_values)
+	#print(type(x_values))
+	#print(assint_values)
+	#print(error_values)
 	plt.yscale("log")
-	plt.plot(x_values, assint_values)
+	plt.plot(x_values, assint_values, label="assint^n")
+	plt.plot(x_values, error_autovalor, label="error autovalor")
+	plt.plot(x_values, error_autovetor, label="error autovetor")
+	plt.legend()
 	plt.show()
-	#valor, vetor = metodo.get_autovetor_autovalor()
+	
 	#print(metodo.get_microk())
 	pass
 if __name__ == '__main__':
