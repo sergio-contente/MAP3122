@@ -22,7 +22,7 @@ def main():
 			print("SELECIONE QUAL A MATRIZ DESEJA-SE APLICAR O MÉTODO: ")
 			modo = int(input("1 ou 2: "))
 			if modo == 1:
-				n = 3
+				n = 10
 				A = matrix_1()
 				break
 			elif modo == 2:
@@ -40,7 +40,7 @@ def main():
 	it_max = np.random.randint(30, 71)
 	vector_x0 = np.random.rand(n,1)
 	metodo = metodo_potencia(vector_x0, A, it_max, n)
-	true_eigenvalues, true_eigenvectors = metodo.get_eigenvalues_eigenvectors()
+	true_eigenvalues, true_eigenvectors = get_sorted_eigenvalues_eigenvectors(A)
 	for i in range(1, it_max):
 		x_values.append(i)
 		mu_k = metodo.update_mu_k()

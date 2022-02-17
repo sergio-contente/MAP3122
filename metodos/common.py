@@ -21,6 +21,18 @@ def get_eigenvector_error(n, x_k, eigenvectors):
 	eigenvector_error = np.linalg.norm(x_k - eigenvectors[:, n - 1].reshape(n,1)).reshape(-1)
 	return eigenvector_error
 
+def get_sorted_eigenvalues_eigenvectors(matrix):
+        lambdas_unsorted, eigenvectors_unsorted = np.linalg.eig(matrix)
+        lambdas_sorted = np.sort(np.abs(lambdas_unsorted))
+        eigenvectors_sorted = np.empty(eigenvectors_unsorted.shape)
+        for lambda_sorted in lambdas_sorted:
+            for lambda_unsorted in lambdas_unsorted:
+                if lambda_sorted == np.abs(lambda_unsorted):
+                    eigenvector_sorted_index = np.where(lambdas_sorted == lambda_sorted)
+                    eigenvector_unsorted_index = np.where(lambdas_unsorted == lambda_unsorted)
+                    eigenvectors_sorted[:, eigenvector_sorted_index] = eigenvectors_unsorted[:, eigenvector_unsorted_index]
+        return lambdas_sorted, eigenvectors_sorted
+
 def plot_aproximations(iterations, eigenvalue_error, eigenvector_error, error_assintotico, error_assintotico_quadrado):
 	plt.yscale("log")
 	plt.plot(iterations, error_assintotico, label=r'$\left|\frac{\lambda_1}{\lambda_2}\right|^k $')
