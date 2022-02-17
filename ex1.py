@@ -3,6 +3,8 @@ from metodos.common import *
 import numpy as np
 import matplotlib.pyplot as plt
 
+epsilon = 10**(-15)
+
 def matrix_1():
 	B = np.random.rand(10,10)
 	B_t = np.transpose(B)
@@ -11,7 +13,7 @@ def matrix_1():
 def matrix_2(n):
 	B = np.random.rand(n,n)
 	B_inv = np.linalg.inv(B)
-	D = np.tril(np.random.random((n,n)), 0)
+	D = np.tril(np.abs(np.random.random((n,n))), 0)
 	D = np.triu(D, 0)
 	A = np.dot(B, D)
 	A = np.dot(A, B_inv)
@@ -39,7 +41,7 @@ def main():
 	eigenvector_error_vector = []
 	it_max = np.random.randint(30, 71)
 	vector_x0 = np.random.rand(n,1)
-	metodo = metodo_potencia(vector_x0, A, it_max, n)
+	metodo = metodo_potencia(vector_x0, A)
 	true_eigenvalues, true_eigenvectors = get_sorted_eigenvalues_eigenvectors(A)
 	for i in range(1, it_max):
 		x_values.append(i)
@@ -49,7 +51,9 @@ def main():
 		eigenvector_error = get_eigenvector_error(n, x_k, true_eigenvectors)
 		eigenvalue_error_vector.append(eigenvalue_error)
 		eigenvector_error_vector.append(eigenvector_error)
-	assint_values, assint_values_squared = get_assintotico(n, true_eigenvalues, it_max)
+		if eigenvector_error <= epsilon:
+			break
+	assint_values, assint_values_squared = get_assintotico(n, true_eigenvalues, x_values[len(x_values) - 1])
 
 	plot_aproximations(x_values, eigenvalue_error_vector, eigenvector_error_vector, assint_values, assint_values_squared)
 	pass

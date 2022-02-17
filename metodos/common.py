@@ -6,7 +6,7 @@ def get_assintotico(n, eigenvalues, it_max):
 	squared = []
 	base = 1
 	assint = np.abs(eigenvalues[n - 2]/eigenvalues[n - 1])
-	for i in range(1, it_max):
+	for i in range(0, it_max):
 		base = base * assint
 		base_squared = base**2
 		vector.append(base)
