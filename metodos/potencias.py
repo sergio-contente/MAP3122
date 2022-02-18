@@ -1,68 +1,71 @@
 import numpy as np
 import matplotlib.pyplot as plt
 class metodo_potencia:
-    def __init__(self, x_0, A, itmax, n):
+    def __init__(self, x_0, A, it_max, n):
         self.x_k = x_0
-        self.matriz = A
-        self.itmax = itmax
-        print(f"itmax: {self.itmax}")
+        self.mu_k = 0.0
+        self.matrix = A
+        self.it_max = it_max
+        print(f"it_max: {self.it_max}")
         self.n = n
+        self.eta = self.get_assintotico()[0]
 
-    def get_xk(self):
-        self.x_k = np.dot(self.matriz, self.x_k)/np.linalg.norm((np.dot(self.matriz, self.x_k)))
+    def update_x_k(self):
+        self.x_k = np.dot(self.matrix, self.x_k)/np.linalg.norm(np.dot(self.matrix, self.x_k))
         return self.x_k
 
-    def get_microk(self):
-        xk_t = np.transpose(self.get_xk())
-        A_xk = np.dot(self.matriz, self.x_k)
-        microk = np.dot(xk_t, A_xk)/np.dot(xk_t, self.x_k)
-        return microk
+    def update_mu_k(self):
+        x_k_transp = np.transpose(self.x_k)
+        print(f"xktransp: {x_k_transp}")
+        #A_x_k = np.dot(self.matrix, self.x_k)
+        self.mu_k = np.dot(x_k_transp, np.dot(self.matrix, self.x_k))/np.dot(x_k_transp, self.x_k)
+        return self.mu_k
     
-    def autovalor_autovetor_error(self):
-        autovalor, autovetor = self.get_autovetor_autovalor()
-        #error_autovetor = np.linalg.norm(self.get_xk() - autovetor[autovalor.size - 1])
-        #print(autovetor[autovalor.size - 1])
-        #print(f"iterator: {self.itmax}")
-        #print(f"autovetor_error: {error_autovetor}")
-        error_autovalor =np.abs(self.get_microk() - np.round(autovalor[autovalor.size - 1]))
-        #error_autovalor_list = error_autovalor.tolist()
-        #print(f"autovalor_error: {error_valor}")
-        #print(f"microk: {self.get_microk()}")
-        return error_autovalor# error_autovetor
+    def eigenvalue_error(self):
+        self.mu_k = self.update_mu_k()
+        eigenvalues = self.get_eigenvector_eigenvalue()[0]
+        eigenvalue_error = np.abs(self.mu_k - np.round(eigenvalues[self.n - 1])).reshape(-1)
+        print(f"eigenvalue_error: {eigenvalue_error}")
+        return eigenvalue_error
+
+    def eigenvector_error(self):
+        self.x_k = self.update_x_k()
+        eigenvectors = self.get_eigenvector_eigenvalue()[1]
+        print(f"eigenvector_transp: {np.transpose(eigenvectors[:, self.n - 1])}")
+        print(f"eigenvector_reshaped: {eigenvectors[:, self.n - 1].reshape(self.n,1)}")
+        print(f"x_k: {self.x_k}")
+        print(f"eigenvector-x_k: {eigenvectors[:, self.n - 1].reshape(3,1) - self.x_k}")
+        eigenvector_error = np.linalg.norm(self.x_k - eigenvectors[:, self.n - 1].reshape(self.n,1)).reshape(-1)
+        print(f"eigenvector_error: {eigenvector_error}")
+        return eigenvector_error
 
     def get_assintotico(self):
-        vetor = []
+        vector = []
         base = 1
-        autovalores = self.get_autovetor_autovalor()[0]
-        assint = np.abs(autovalores[autovalores.size - 2]/autovalores[autovalores.size - 1])
-        #print(np.power(assint, self.itmax))
-        for i in range(1, self.itmax):
+        eigenvalues = self.get_eigenvector_eigenvalue()[0]
+        assint = np.abs(eigenvalues[self.n - 2]/eigenvalues[self.n - 1])
+        for i in range(1, self.it_max):
             #print(base)
             base = base * assint
-            vetor.append(base)
-        return vetor
+            vector.append(base)
+        return vector
 
-    def get_autovetor_autovalor(self):
-        lambdas_old, autovetores = np.linalg.eig(self.matriz)
-        print(f"ANTIGO LAMBDA: {lambdas_old}")
-        print(f"ANTIGO VETORES: {autovetores}")
-        lambdas = np.sort(np.abs(lambdas_old))
-        vetores = np.empty(autovetores.shape)
-        for j in range(0, lambdas_old.size):
-            for i in range(0, autovetores[j].size):
-                if (np.dot(self.matriz, autovetores[j][i]) - np.dot(lambdas_old[j], autovetores[j][i]) == 0).all():
-                    index_lambda = lambdas.np.where(lambdas == np.abs(lambdas_old[j]))
-                    vetores[index_lambda] = autovetores[i]
-        print(f"NOVO LAMBDA: {lambdas}")
-        print(f"NOVO VETORES: {vetores}")
-        return lambdas, vetores
-
-        #lambda_1 = lambdas[lambdas.size-1]
-        #for autovetor in autovetores:
-        #   if (np.dot(self.matriz, autovetor) - np.dot(lambda_key, autovetor) == 0).all():
-        #       
-        #
-        #
-        #
-        #
-        #
+    def get_eigenvector_eigenvalue(self):
+        lambdas_unsorted, eigenvectors_unsorted = np.linalg.eig(self.matrix)
+        print("lunsort: ")
+        print(lambdas_unsorted)
+        print("vunsort: ")
+        print(eigenvectors_unsorted)
+        lambdas_sorted = np.sort(np.abs(lambdas_unsorted))
+        eigenvectors_sorted = np.empty(eigenvectors_unsorted.shape)
+        for lambda_sorted in lambdas_sorted:
+            for lambda_unsorted in lambdas_unsorted:
+                if lambda_sorted == np.abs(lambda_unsorted):
+                    eigenvector_sorted_index = np.where(lambdas_sorted == lambda_sorted)
+                    eigenvector_unsorted_index = np.where(lambdas_unsorted == lambda_unsorted)
+                    eigenvectors_sorted[:, eigenvector_sorted_index] = eigenvectors_unsorted[:, eigenvector_unsorted_index]
+        print("lsort: ")
+        print(lambdas_sorted)
+        print("vsort: ")
+        print(eigenvectors_sorted)
+        return lambdas_sorted, eigenvectors_sorted
