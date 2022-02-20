@@ -14,11 +14,14 @@ def get_assintotico(n, eigenvalues, it_max):
 	return vector, squared
 
 def get_eigenvalue_error(n, mu_k, eigenvalues):
-	eigenvalue_error = np.abs(mu_k - np.round(eigenvalues[n - 1])).reshape(-1)
+	eigenvalue_error = np.abs(mu_k - eigenvalues[n - 1])
 	return eigenvalue_error
 
-def get_eigenvector_error(n, x_k, eigenvectors):
-	eigenvector_error = np.linalg.norm(x_k - eigenvectors[:, n - 1].reshape(n,1)).reshape(-1)
+def get_eigenvector_error(x_k, x_true):
+	#print(f"x_k: {x_k}")
+	#print(f"lambda1: {l1}")
+	eigenvector_error = np.linalg.norm(np.abs(x_k) - np.abs(x_true))
+	#print(f"subtraction: {sub}\nerror: {eigenvector_error}")
 	return eigenvector_error
 
 def get_sorted_eigenvalues_eigenvectors(matrix):
@@ -28,9 +31,22 @@ def get_sorted_eigenvalues_eigenvectors(matrix):
         for lambda_sorted in lambdas_sorted:
             for lambda_unsorted in lambdas_unsorted:
                 if lambda_sorted == np.abs(lambda_unsorted):
-                    eigenvector_sorted_index = np.where(lambdas_sorted == lambda_sorted)
-                    eigenvector_unsorted_index = np.where(lambdas_unsorted == lambda_unsorted)
-                    eigenvectors_sorted[:, eigenvector_sorted_index] = eigenvectors_unsorted[:, eigenvector_unsorted_index]
+                    eigenvector_sorted_index = np.where(lambdas_sorted == lambda_sorted)[0][0]
+                    eigenvector_unsorted_index = np.where(lambdas_unsorted == lambda_unsorted)[0][0]
+                    #print(f"columns: {eigenvector_unsorted_index}")
+                    #print(f"to {eigenvector_sorted_index}")
+                    #print(f"eigenvectors_sorted b4: {eigenvectors_sorted}")
+                    #print(f"eigenvectors_unsorted b4: {eigenvectors_unsorted}")
+                    eigenvectors_sorted[:, [eigenvector_sorted_index]] = eigenvectors_unsorted[:, [eigenvector_unsorted_index]]
+                    #print(f"eigenvectors_sorted after: {eigenvectors_sorted}")
+        for i in range(0,len(lambdas_sorted)):
+            for lambda_unsorted in lambdas_unsorted:
+                if lambdas_sorted[i] == np.abs(lambda_unsorted):
+                    lambdas_sorted[i] = lambda_unsorted
+                    break
+
+        #print(f"lambdas unsorted: {lambdas_unsorted}\n eigenvectors_unsorted:\n{eigenvectors_unsorted}")
+        #print(f"lambdas sorted: {lambdas_sorted}\n eigenvectors_sorted:\n{eigenvectors_sorted}")
         return lambdas_sorted, eigenvectors_sorted
 
 def plot_aproximations(iterations, eigenvalue_error, eigenvector_error, error_assintotico, error_assintotico_quadrado):
