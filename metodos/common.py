@@ -42,3 +42,13 @@ def plot_aproximations(iterations, eigenvalue_error, eigenvector_error, error_as
 	plt.legend()
 	plt.show()
 pass
+
+def is_symmetrical(matrix):
+	print(matrix)
+	for i in range(matrix.shape[0]):
+		for j in range(matrix.shape[1]):
+			if i != j and matrix[i][j] != matrix[j][i]:
+				print(f"NÃO É SIMÉTRICA!")
+				return False
+	return True
+

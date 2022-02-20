@@ -19,67 +19,41 @@ def matrix_2(n):
 	A = np.dot(A, B_inv)
 	return A
 def main():
-	A = np.array([[1,-1,4], [1,4,-2], [1,4,2], [1,-1,0]])
-	qr = fatoracao_qr(A)
-	# v = qr.get_v()
-	# vvt = qr.get_vvt(v)
-	# h = qr.get_H_1(vvt)
-	# print(v)
-	# print(vvt)
-	# print(h)
-	# H = []
-	# for i in range(0, 5):
-	# 	h_i = qr.get_H_n(i)
-	H = []
+	#A = np.array([[12,-51,4], [6,167,-68], [-4,24,-41]])
+	#A = np.array([[1,-1,4],[1,4,-2],[1,4,2]])
+	#A = np.array([[2. , 5., 11.],[5. , 4., 17.],[11., 17., 6.]])
+	A = np.array([[6. , -2., -1.],[-2. , 6., -1.],[-1., -1., 5.]])
+
+	V_k = np.identity(A.shape[1])
 	A_k = A
-	for i in range(0, 2):
-		print(A_k)
-		H_value = qr.get_H_k(A_k)
-		H.append(H_value)
-		A_k = qr.update_A_k(A_k)
-	Q = qr.get_Q(H)
-	R = qr.get_R(Q)
-
+	it_max = 10
+	symmetrical = is_symmetrical(A)
+	converged = False
+	for iteration in range(1, it_max):
+		qr = fatoracao_qr(A_k)
+		Q_k, R_k = qr.get_qr()
+		if symmetrical:
+			print(f"V_k * Q_k:\n{V_k}\n{Q_k}")
+			V_k = np.matmul(V_k,Q_k)
+			print(f"V_k:\n{V_k}")
+		A_k = np.matmul(R_k,Q_k)
+		failed_conversion = False
+		for i in range(A_k.shape[0]):
+			for j in range(A_k.shape[1]):
+				if i > j and np.abs(A_k[i][j]) > epsilon:
+					failed_conversion = True
+					break
+			if i == (A_k.shape[0] - 1) and failed_conversion == False:
+				converged = True
+		if converged:
+			break
+	autovalor, autovetor = np.linalg.eig(A_k)
+	for c in range(V_k.shape[1]):
+		V_k[:,[c]] = V_k[:,[c]]/np.linalg.norm(V_k[:,[c]])
+		#autovetor[:, [c]] = autovetor[:, [c]]/np.linalg.norm(autovetor[:, [c]])
 	
-
-	# while True:
-	# 	try:
-	# 		print("SELECIONE QUAL A MATRIZ DESEJA-SE APLICAR O MÉTODO: ")
-	# 		modo = int(input("1 ou 2: "))
-	# 		if modo == 1:
-	# 			n = 10
-	# 			A = matrix_1()
-	# 			break
-	# 		elif modo == 2:
-	# 			n = np.random.randint(5, 11)
-	# 			A = matrix_2(n)
-	# 			break
-	# 		else:
-	# 			raise ValueError("Entrada inválida!")
-	# 	except ValueError as ve:
-	# 		print(ve)
-
-	# x_values = []
-	# eigenvalue_error_vector = []
-	# eigenvector_error_vector = []
-	# it_max = np.random.randint(30, 71)
-	# vector_x0 = np.random.rand(n,1)
-	# metodo = metodo_potencia(vector_x0, A)
-	# true_eigenvalues, true_eigenvectors = get_sorted_eigenvalues_eigenvectors(A)
-	# for i in range(1, it_max):
-	# 	x_values.append(i)
-	# 	mu_k = metodo.update_mu_k()
-	# 	x_k = metodo.update_x_k()
-	# 	eigenvalue_error = get_eigenvalue_error(n, mu_k, true_eigenvalues)
-	# 	eigenvector_error = get_eigenvector_error(n, x_k, true_eigenvectors)
-	# 	eigenvalue_error_vector.append(eigenvalue_error)
-	# 	eigenvector_error_vector.append(eigenvector_error)
-	# 	if eigenvector_error <= epsilon:
-	# 		break
-	# assint_values, assint_values_squared = get_assintotico(n, true_eigenvalues, x_values[len(x_values) - 1])
-
-	# plot_aproximations(x_values, eigenvalue_error_vector, eigenvector_error_vector, assint_values, assint_values_squared)
-	# pass
+	print(f"Autovalores reais:\n{autovalor}\nAutovalores aproximados:\n{A_k}")
+	print(f"Autovetores reais:\n{autovetor}\nAutovetores aproximados:\n{V_k}")
 if __name__ == '__main__':
 	main()
 

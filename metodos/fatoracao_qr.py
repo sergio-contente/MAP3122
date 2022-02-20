@@ -3,44 +3,66 @@ import matplotlib.pyplot as plt
 
 class fatoracao_qr:
 	def __init__(self, A):
+		self.A_0 = A
 		self.A_k = A
-		self.tamanho = len(self.A_k)
-		self.H_k = 0.0
-	# def update_H_k(self):
-	# 	return None
+		self.tamanho = A.shape[1]
+		self.q_teste = self.A_0
+		self.R = A
+		self.Q = np.identity(self.A_0.shape[1])
+
 	def get_v(self, A_k):
 		x = A_k[:, [0]]
+		if x[0][0] < 0:
+			delta = -1
+		else:
+			delta = 1
+		#print(f"x[0][0]: {x[0][0]} delta: {delta}")
 		x = np.transpose(x)
-		#print(x)
+		#print(f"x: {x}")
 		norm_x = np.linalg.norm(x)
-		#print(norm_x)
-		y = np.eye(1, self.tamanho, 0)
-		#print(y)
-		v = (norm_x * y) - x
-		#print(v)
+		e = np.zeros_like(x)
+		e[0][0] = 1 #retorna base canonica (1,0,0,0)
+		#print(f"e:\n{e}")
+		v = x + delta*norm_x*e
+		v = np.transpose(v)
 		return v
-	def get_vvt(self, v):
+
+	def get_H_k(self, v):
 		vt = np.transpose(v)
-		#print(vt)
-		vt_v = np.dot(vt, v)
-		vt_v = vt_v/np.linalg.norm(vt_v)
-		#print(vt_v)
-		return vt_v
-	def get_H_k(self, A_k):
-		v = self.get_v(A_k)
-		vvt = self.get_vvt(v)
-		identidade = np.identity(self.tamanho)
+		#print(f"v: {v}")
+		vvt = np.dot(v, vt)
+		vvt = vvt/(np.linalg.norm(v)**2)
+		identidade = np.identity(v.shape[0])
+		#print(f"identidade: {identidade}")
 		H = identidade - 2*vvt
 		return H
-	def get_A_anterior(self, Q):
-		R = np.dot(Q ,self.A_k)
-		print(R)
-		return R
-	def get_Q(self, H):
-		q = 1
-		for H_k in H:
-			q = q * H_k
-		return q
-	def update_A_k(self, A_ant):
-		self.A_k = np.delete(A_ant, [0], 1)
+
+	def update_A_k(self):
+		self.A_k = np.matmul(self.Q, self.R)
 		return self.A_k
+
+	def update_Q_k(self, H_k):
+		size = H_k.shape[1]
+		i = self.tamanho - size
+		temp = np.matmul(self.Q[i:, i:], H_k)
+		self.Q[i:,i:] = temp
+		#print(f"Q:\n{self.Q}")
+		return self.Q
+
+	def update_R_k(self, H_k):
+		size = H_k.shape[1]
+		i = self.tamanho - size
+		temp = np.matmul(H_k, self.R[i:, i:])
+		self.R[i:,i:] = temp
+		#print(f"R:\n{self.R}")
+		return self.R
+
+	def get_qr(self):
+		R = self.A_0
+		for i in range(self.A_0.shape[1] - 1):
+			v = self.get_v(R[i:, i:])
+			H = self.get_H_k(v)
+			Q = self.update_Q_k(H)
+			R = self.update_R_k(H)
+		return Q, R
+		
