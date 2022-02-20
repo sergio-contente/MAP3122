@@ -1,5 +1,3 @@
-from re import A
-from xmlrpc.client import MAXINT
 from metodos.potencias import metodo_potencia
 from metodos.common import *
 import numpy as np
@@ -10,16 +8,16 @@ epsilon = 10**(-15)
 def matrix_1(n):
 	B = np.random.rand(n,n)
 	B_t = np.transpose(B)
-	A = np.add(B, B_t)
+	A = B + B_t
 	return A
+
 def matrix_2(n):
 	B = np.random.rand(n,n)
 	B_inv = np.linalg.inv(B)
-	D = np.tril(np.abs(np.random.random((n,n))), 0)
-	D = np.triu(D, 0)
-	A = np.dot(B, D)
-	A = np.dot(A, B_inv)
+	D = np.diag(np.random.randn(n)*10)
+	A = np.dot(np.dot(B, D),B_inv)
 	return A
+
 def main():
 	while True:
 		try:
@@ -73,4 +71,3 @@ def main():
 	
 if __name__ == '__main__':
 	main()
-
