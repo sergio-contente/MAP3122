@@ -4,7 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 epsilon = 10**(-15)
-
 def matrix_1(n):
 	B = np.random.rand(n,n)
 	B_t = np.transpose(B)
@@ -14,13 +13,12 @@ def matrix_1(n):
 def matrix_2(n):
 	B = np.random.rand(n,n)
 	B_inv = np.linalg.inv(B)
-	autovalores_proximos = [10.71, 12.64, 14.86,  4.07, 11.29,  3.05, 10.12, 3.51,  6.35, 13.02]
-	autovalores_distantes = [ 1.53,  9.26, 18.75, 13.88,  5.41, 10.77, 12.31, 9.78, 11.35, 10.92]
+	autovalores_proximos = [10.71, 52.64, 14.86,  30.07, 21.10,  3.05, 20.35, 53.12]
+	autovalores_distantes = [ 11.53, 23.88,  14.41, 20.77, 22.31, 11.78, 21.35, 20.92]
 	D_prox = np.diag(np.array(autovalores_proximos))
 	D_dist = np.diag(np.array(autovalores_distantes))
 	A = np.matmul(np.matmul(B, D_prox),B_inv)
 	return A
-
 def main():
 	while True:
 		try:
@@ -31,7 +29,7 @@ def main():
 				A = matrix_1(n)
 				break
 			elif modo == 2:
-				n = 10
+				n = 8
 				A = matrix_2(n)
 				break
 			else:
@@ -53,7 +51,7 @@ def main():
 	x_true = true_eigenvectors[:,[n-1]]
 	
 	metodo = metodo_potencia(vector_x0, A)
-	
+	A_copy = np.array(A)
 	for i in range(1, it_max):
 		x_values.append(i)
 		mu_k = metodo.update_mu_k()
@@ -78,6 +76,7 @@ def main():
 		print(f"\nDid not converge before reaching it_max")
 
 	plot_aproximations(x_values, eigenvalue_error_vector, eigenvector_error_vector, assint_values, assint_values_squared)
+	return A_copy
 	
 if __name__ == '__main__':
 	main()

@@ -1,4 +1,5 @@
 from metodos.fatoracao_qr import fatoracao_qr
+from metodos.potencias_inversas import metodo_potencias_inversas
 from metodos.common import *
 import numpy as np
 import matplotlib.pyplot as plt
@@ -22,7 +23,6 @@ def potencias(it_max, A, n): #copy from ex1.py
             mu_k = metodo.update_mu_k()
             x_k = metodo.update_x_k()
             eigenvector_error = get_eigenvector_error(x_k, x_true)
-            eigenvector_error_vector.append(eigenvector_error)
             if eigenvector_error <= epsilon:
                 converged = True
                 break
@@ -62,9 +62,37 @@ def metodo_fatoracao_qr(A):
     x_star = autovetores[0]
     return l1, x_star
 
+def potencias_inversas(A):
+    n = len(A)
+    while True:
+        vector_x0 = np.random.rand(n,1)
+        metodo = metodo_potencias_inversas(vector_x0, A)
+        if metodo.sassenfeld_criteria() or metodo.lines_criteria():
+            break
+    converged = False
+    x_values = []
+    eigenvalue_error_vector = []
+    eigenvector_error_vector = []
+    it_max = 69
+    true_eigenvalues, true_eigenvectors = get_sorted_eigenvalues_eigenvectors(np.linalg.inv(A))
+    lambda1 = true_eigenvalues[n-1]
+    lambda2 = true_eigenvalues[n-2]
+    x_true = true_eigenvectors[:,[n-1]]
+
+    for i in range(1, it_max):
+        x_values.append(i)
+        omega = metodo.optimal_omega(lambda1)
+        x_k = metodo.update_x_k()
+        mu_k = metodo.update_mu_k()
+        eigenvalue_error = get_eigenvalue_error(mu_k, lambda1)
+        eigenvector_error = get_eigenvector_error(x_k, x_true)
+        if eigenvector_error <= epsilon:
+            converged = True
+            break
+    return mu_k, x_k
 def main():
     eps1 = np.array([[0,1],[1,2],[2,3],[2,4],[2,5],[3,6],[4,7],[5,8],[6,9],[7,8],[8,10],[10,14],[14,11],[11,12],[12,13],[13,15]])
-    eps2 = np.array([[0,2],[1,3],[2,5],[3,4],[4,7],[3,4],[4,7],[5,6],[5,10],[6,7],[7,11],[7,8],[8,9],[8,12],[10,13],[11,14],[12,13],[13,14],[14,15]])
+    eps2 = np.array([[0,1],[1,2],[2,3],[3,4],[2,5],[5,6],[5, 12],[6,7],[7,11],[7,13],[7,8],[6,7],[7,8],[7,11],[7, 13],[9,10],[10,11],[12,14],[13,14],[14,15]])
 
 #gera matrizes de adjacencia a partir de matrizes de arestas
     A1 = np.zeros((16,16))
@@ -101,14 +129,10 @@ def main():
     #   sorted = np.sort(np.abs(eigenvalues))
     
     #l1, x_star= potencias(70, A, len(A))
-    l1, x_star= metodo_fatoracao_qr(A)
+    #l1, x_star= metodo_fatoracao_qr(A)
+    l1, x_star = metodo_potencias_inversas(A)
     print(f"l1: {l1}\nx*:\n{x_star}")
     print(f"gmed_1 < lambda1 < gmax1:\n{grau_med1} < {l1} < {grau_max1}")
-
-
-
-
-
 
 if __name__ == '__main__':
     main()

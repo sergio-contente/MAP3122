@@ -15,15 +15,10 @@ def get_assintotico(lambda1, lambda2, it_max):
 
 def get_eigenvalue_error(mu_k, lambda1):
 	eigenvalue_error = float(np.abs(mu_k-lambda1))
-	#print(f"autovalor erro: \n{eigenvalue_error}")
 	return eigenvalue_error
 
 def get_eigenvector_error(x_k, x_true):
-	#print(f"x_k: {x_k}")
-	#print(f"lambda1: {l1}")
-	eigenvector_error = np.linalg.norm(x_k - x_true)
-	#print(f"autovetor erro: \n{eigenvector_error}")
-	#print(f"subtraction: {sub}\nerror: {eigenvector_error}")
+	eigenvector_error = np.linalg.norm(np.abs(x_k) - np.abs(x_true))
 	return eigenvector_error
 
 def get_sorted_eigenvalues_eigenvectors(matrix):
@@ -49,55 +44,28 @@ def plot_aproximations(iterations, eigenvalue_error, eigenvector_error, error_as
 	plt.plot(iterations, error_assintotico_quadrado, label=r'$\left|\frac{\lambda_1}{\lambda_2}\right|^{2k} $')
 	plt.plot(iterations, eigenvalue_error, label="erro autovalor")
 	plt.plot(iterations, eigenvector_error, label="erro autovetor")
+	plt.xlabel('Iterações')
+	plt.ylabel('Erro L2')
 	plt.legend()
 	plt.show()
 pass
 
 def SOR(matrix, b, omega):
-	x = np.transpose(np.random.randn(b.shape[0]))
-	print(f"b:\n{b}\nx:\n{x}")
+	x = np.random.rand(b.shape[0]).reshape(b.shape)
 	residual = 1
 	iterations = 0
 	while residual > 10e-15 and iterations < 50:
-		for i in range(len(b)):
+		for i in range(matrix.shape[0]):
 			sum = 0
-			for j in range(len(b)):
+			for j in range(matrix.shape[1]):
 				if j != i:
-					sum += matrix[i][j] * x[j]
-					#print(f"sum: {sum} aij: {matrix[i][j]} omega: {omega} bi: {b[i][0]} b: {b}\n i,j: {i},{j}")
-					#print(f"sum: {sum}")
-			x[i] = (1-omega) * x[i] + (omega / matrix[i][i]) * (b[i] - sum)
+					sum += matrix[i, j] * x[j]
+			x[i] = (1 - omega) * x[i] + (omega / matrix[i, i]) * (b[i] - sum)
 		residual = np.linalg.norm(np.dot(matrix, x) - b)
-		#print(f"x:\n{x}\nresidual: {residual}")
 		iterations += 1
-	#print(f"iterations: {iterations} matriz: {matrix}")	#p")
 	return x
-	# A=matrix
-	# valores_x = []
-	# n = matrix.shape[0]
-	# x0 = np.random.rand(n)
-	# valores_x.append(x0)
-
-	# for k in range(50):
-	# 	x_ant = valores_x[-1]
-	# 	x_at = np.zeros(n)
-	# 	for i in range(n):
-	# 		xi = b[i]
-	# 		for j in range(i):
-	# 			xi=xi-A[i][j]*x_at[j]
-
-
-	# 		for j in range(i+1, n):
-	# 			xi=xi-A[i][j]*x_ant[j]
-
-	# 		xi=xi/A[i][i]
-	# 		print(f"ai: {xi}")
-	# 		x_at[i] = (1-omega)*x_ant[i] + omega*xi
-	# 	valores_x.append(x_at)    
-	# return valores_x[-1]
 
 def is_symmetrical(matrix):
-	#print(matrix)
 	for i in range(matrix.shape[0]):
 		for j in range(matrix.shape[1]):
 			if i != j and matrix[i][j] != matrix[j][i]:
@@ -121,29 +89,3 @@ def grau_med_max(eps):
 			grau_max = grau
 	return avg, grau_max
 
-# def sor_solver(A, b, omega, initial_guess, convergence_criteria):
-#     """
-#     This is an implementation of the pseudo-code provided in the Wikipedia article.
-#     Arguments:
-#         A: nxn numpy matrix.
-#         b: n dimensional numpy vector.
-#         omega: relaxation factor.
-#         initial_guess: An initial solution guess for the solver to start with.
-#         convergence_criteria: The maximum discrepancy acceptable to regard the current solution as fitting.
-#     Returns:
-#         phi: solution vector of dimension n.
-#     """
-#     step = 0
-#     phi = initial_guess[:]
-#     residual = np.linalg.norm(np.matmul(A, phi) - b)  # Initial residual
-#     while residual > convergence_criteria:
-#         for i in range(A.shape[0]):
-#             sigma = 0
-#             for j in range(A.shape[1]):
-#                 if j != i:
-#                     sigma += A[i, j] * phi[j]
-#             phi[i] = (1 - omega) * phi[i] + (omega / A[i, i]) * (b[i] - sigma)
-#         residual = np.linalg.norm(np.matmul(A, phi) - b)
-#         step += 1
-#         print("Step {} Residual: {:10.6g}".format(step, residual))
-#     return phi
