@@ -128,9 +128,9 @@ def main():
     print(f"vals:\n{l1_orig}\n\nvecs:\n{x_star_orig}\n")
     #   sorted = np.sort(np.abs(eigenvalues))
     
-    #l1, x_star= potencias(70, A, len(A))
+    l1, x_star= potencias(70, A, len(A))
     #l1, x_star= metodo_fatoracao_qr(A)
-    l1, x_star = metodo_potencias_inversas(A)
+    #l1, x_star = potencias_inversas(A)
     print(f"l1: {l1}\nx*:\n{x_star}")
     print(f"gmed_1 < lambda1 < gmax1:\n{grau_med1} < {l1} < {grau_max1}")
 

@@ -2,7 +2,7 @@ from math import sqrt
 import numpy as np
 from metodos.common import *
 class metodo_potencias_inversas:
-	def _init_(self, x_0, A):
+	def __init__(self, x_0, A):
 		self.n = len(A)
 		self.x_k = x_0
 		self.mu_k = 0.0
