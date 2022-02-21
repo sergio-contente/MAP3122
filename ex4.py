@@ -90,6 +90,19 @@ def potencias_inversas(A):
             converged = True
             break
     return mu_k, x_k
+
+def grau_centralidade(x_star, lambda1, adjacencia):
+    central_vertices = []
+    x_star = np.transpose(x_star)
+    for i in range(adjacencia.shape[0]):
+        sum = 0
+        for j in range(adjacencia.shape[1]):
+            sum += x_star[0][j]*adjacencia[i][j]/lambda1
+        central_vertices.append(sum)
+    max_centralidade = max(central_vertices)
+    return central_vertices.index(max_centralidade)
+
+
 def main():
     eps1 = np.array([[0,1],[1,2],[2,3],[2,4],[2,5],[3,6],[4,7],[5,8],[6,9],[7,8],[8,10],[10,14],[14,11],[11,12],[12,13],[13,15]])
     eps2 = np.array([[0,1],[1,2],[2,3],[3,4],[2,5],[5,6],[5, 12],[6,7],[7,11],[7,13],[7,8],[6,7],[7,8],[7,11],[7, 13],[9,10],[10,11],[12,14],[13,14],[14,15]])
@@ -125,14 +138,14 @@ def main():
     l1_orig = eigenvalues[15]
     x_star_orig = eigenvectors[:, [15]]
     x_star_orig = x_star_orig/np.linalg.norm(x_star_orig)
-    print(f"vals:\n{l1_orig}\n\nvecs:\n{x_star_orig}\n")
-    #   sorted = np.sort(np.abs(eigenvalues))
-    
-    l1, x_star= potencias(70, A, len(A))
-    #l1, x_star= metodo_fatoracao_qr(A)
+    print(f"Matriz A = \n {A}")    
+    #l1, x_star= potencias(70, A, len(A))
+    l1, x_star= metodo_fatoracao_qr(A)
     #l1, x_star = potencias_inversas(A)
-    print(f"l1: {l1}\nx*:\n{x_star}")
-    print(f"gmed_1 < lambda1 < gmax1:\n{grau_med1} < {l1} < {grau_max1}")
+    vertice_max_central = grau_centralidade(x_star, l1, A)
+    #print(f"gmed_1 < lambda1 < gmax1:\n{grau_med1} < {l1} < {grau_max1}")
+    print(f"gmed_2 < lambda1 < gmax2:\n{grau_med2} < {l1} < {grau_max2}")
+    print(f"Vértice com maior grau de centralidade de autovetor: {vertice_max_central}")
 
 if __name__ == '__main__':
     main()
