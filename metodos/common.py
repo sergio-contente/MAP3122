@@ -72,10 +72,10 @@ def SOR(matrix, b, omega):
 					#print(f"sum: {sum} aij: {matrix[i][j]} omega: {omega} bi: {b[i][0]} b: {b}\n i,j: {i},{j}===================================================================================================")
 			x[i][0] = (1-omega) * x[i][0] + (omega / matrix[i][i]) * (b[i][0] - sum)
 		residual = np.linalg.norm(np.dot(matrix,x) - b)
-		print(f"x:\n{x}\nresidual: {residual}")
+		#print(f"x:\n{x}\nresidual: {residual}")
 		iterations += 1
-	print(iterations)
-	print(f"")
+	#print(iterations)
+	#print(f"")
 	return x
 
 # def SOR(A, b, omega):
