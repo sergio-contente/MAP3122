@@ -139,11 +139,12 @@ def main():
     x_star_orig = eigenvectors[:, [15]]
     x_star_orig = x_star_orig/np.linalg.norm(x_star_orig)
     print(f"Matriz A = \n {A}")    
-    l1, x_star= potencias(70, A, len(A))
-    #l1, x_star= metodo_fatoracao_qr(A)
+    #l1, x_star= potencias(70, A, len(A))
+    l1, x_star= metodo_fatoracao_qr(A)
     #l1, x_star = potencias_inversas(A)
     vertice_max_central = grau_centralidade(x_star, l1, A)
-    print(f"gmed_1 < lambda1 < gmax1:\n{grau_med1} < {l1} < {grau_max1}")
+    #print(f"gmed_1 < lambda1 < gmax1:\n{grau_med1} < {l1} < {grau_max1}")
+    print(f"gmed_2 < lambda1 < gmax2:\n{grau_med2} < {l1} < {grau_max2}")
     print(f"Vértice com maior grau de centralidade de autovetor: {vertice_max_central}")
 
 if __name__ == '__main__':
