@@ -52,3 +52,18 @@ def is_symmetrical(matrix):
 				return False
 	return True
 
+def grau_med_max(eps):
+	vector = np.zeros(16)
+	total = 0
+	grau_max = 0
+	for i in range(16):
+		for line in eps:
+			for vec in line:
+				if i == vec:
+					vector[i] += 1
+					total += 1
+	avg = total/16
+	for grau in vector:
+		if grau > grau_max:
+			grau_max = grau
+	return avg, grau_max
