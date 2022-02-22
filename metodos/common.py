@@ -49,13 +49,14 @@ def plot_aproximations(iterations, eigenvalue_error, eigenvector_error, error_as
 	plt.plot(iterations, error_assintotico_quadrado, label=r'$\left|\frac{\lambda_1}{\lambda_2}\right|^{2k} $')
 	plt.plot(iterations, eigenvalue_error, label="erro autovalor")
 	plt.plot(iterations, eigenvector_error, label="erro autovetor")
+	plt.xlabel('Iterações')
+	plt.ylabel('Erro L2')
 	plt.legend()
 	plt.show()
 pass
 
 def SOR(matrix, b, omega):
 	x = np.random.rand(b.shape[0]).reshape(b.shape)
-	#print(f"b:\n{b}\nx:\n{x}")
 	residual = 1
 	iterations = 0
 	while residual > 10e-15 and iterations < 50:
@@ -64,16 +65,9 @@ def SOR(matrix, b, omega):
 			for j in range(matrix.shape[1]):
 				if j != i:
 					sum += matrix[i, j] * x[j]
-					#print(f"sum: {sum} a{i}{j}: {matrix[i, j]} x[{j}]: {x[j]}")
-					#print(f"sum: {sum}")
-			#print(f"x[{i}]: {x[i, 0]} omega: {omega} matrix[{i}, {i}]: {matrix[i, i]} b[{i}]: {b[i]} sum: {sum}")
 			x[i] = (1 - omega) * x[i] + (omega / matrix[i, i]) * (b[i] - sum)
-			#x[i,0] = (1-omega) * x[i, 0] + (omega / matrix[i, i]) * (b[i,0] - sum[0])
 		residual = np.linalg.norm(np.dot(matrix, x) - b)
-		#print(f"x:\n{x}\nresidual: {residual}")
 		iterations += 1
-		#print("Step {} Residual: {:10.6g}".format(iterations, residual))
-	#print(f"iterations: {iterations} matriz: {matrix}")	#p")
 	return x
 	# A=matrix
 	# valores_x = []
