@@ -2,7 +2,10 @@ from metodos.potencias import metodo_potencia
 from metodos.common import *
 import numpy as np
 import matplotlib.pyplot as plt
-
+'''
+Nome: Sergio Magalhães Contente NUSP: 10792087
+Nome: Jonas Gomes de Morais NUSP: 10893805
+'''
 epsilon = 10**(-15)
 def matrix_1(n):
 	B = np.random.rand(n,n)

@@ -1,7 +1,10 @@
 from metodos.potencias_inversas import metodo_potencias_inversas
 from metodos.common import *
 import numpy as np
-
+'''
+Nome: Sergio Magalhães Contente NUSP: 10792087
+Nome: Jonas Gomes de Morais NUSP: 10893805
+'''
 epsilon = 10**(-15)
 
 def matrix_1(n):

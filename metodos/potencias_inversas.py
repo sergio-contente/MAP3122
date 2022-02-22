@@ -1,6 +1,10 @@
 from math import sqrt
 import numpy as np
 from metodos.common import *
+'''
+Nome: Sergio Magalhães Contente NUSP: 10792087
+Nome: Jonas Gomes de Morais NUSP: 10893805
+'''
 class metodo_potencias_inversas:
 	def __init__(self, x_0, A):
 		self.n = len(A)
