@@ -41,9 +41,9 @@ def main():
 	x_values = []
 	eigenvalue_error_vector = []
 	eigenvector_error_vector = []
-	it_max = 50
+	it_max = 100
 
-	#keeps generating new matrices until one the criteria is satisfied
+	#Gera novas matrizes ate que um dos criterios seja atendido
 	while True:
 		vector_x0 = np.random.rand(n,1)
 		if modo == 1:
@@ -76,8 +76,8 @@ def main():
 			break
 	assint_values, assint_values_squared = get_assintotico(lambda1, lambda2, x_values[len(x_values) - 1])
 	
-	print(f"Matrix: \n{A}\nmu_k: {mu_k} x_k:\n{x_k}")
-	print(f"l1: {lambda1} l2: {lambda2} l2/l1: {lambda2/lambda1}")
+	print(f"Matrix: \n{A}\nmu_k: {mu_k}\nx_k:\n{x_k}")
+	print(f"errovec: {eigenvector_error} l1: {lambda1} l2: {lambda2} l2/l1: {lambda2/lambda1}\nx*:\n{x_true}")
 	if converged:
 		print(f"\nConverged before reaching it_max")
 	else:

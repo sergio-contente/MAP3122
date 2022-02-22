@@ -21,7 +21,7 @@ def get_eigenvalue_error(mu_k, lambda1):
 def get_eigenvector_error(x_k, x_true):
 	#print(f"x_k: {x_k}")
 	#print(f"lambda1: {l1}")
-	eigenvector_error = np.linalg.norm(x_k - x_true)
+	eigenvector_error = np.linalg.norm(np.abs(x_k) - np.abs(x_true))
 	#print(f"autovetor erro: \n{eigenvector_error}")
 	#print(f"subtraction: {sub}\nerror: {eigenvector_error}")
 	return eigenvector_error
@@ -54,22 +54,25 @@ def plot_aproximations(iterations, eigenvalue_error, eigenvector_error, error_as
 pass
 
 def SOR(matrix, b, omega):
-	x = np.transpose(np.random.randn(b.shape[0]))
-	print(f"b:\n{b}\nx:\n{x}")
+	x = np.random.rand(b.shape[0]).reshape(b.shape)
+	#print(f"b:\n{b}\nx:\n{x}")
 	residual = 1
 	iterations = 0
 	while residual > 10e-15 and iterations < 50:
-		for i in range(len(b)):
+		for i in range(matrix.shape[0]):
 			sum = 0
-			for j in range(len(b)):
+			for j in range(matrix.shape[1]):
 				if j != i:
-					sum += matrix[i][j] * x[j]
-					#print(f"sum: {sum} aij: {matrix[i][j]} omega: {omega} bi: {b[i][0]} b: {b}\n i,j: {i},{j}")
+					sum += matrix[i, j] * x[j]
+					#print(f"sum: {sum} a{i}{j}: {matrix[i, j]} x[{j}]: {x[j]}")
 					#print(f"sum: {sum}")
-			x[i] = (1-omega) * x[i] + (omega / matrix[i][i]) * (b[i] - sum)
+			#print(f"x[{i}]: {x[i, 0]} omega: {omega} matrix[{i}, {i}]: {matrix[i, i]} b[{i}]: {b[i]} sum: {sum}")
+			x[i] = (1 - omega) * x[i] + (omega / matrix[i, i]) * (b[i] - sum)
+			#x[i,0] = (1-omega) * x[i, 0] + (omega / matrix[i, i]) * (b[i,0] - sum[0])
 		residual = np.linalg.norm(np.dot(matrix, x) - b)
 		#print(f"x:\n{x}\nresidual: {residual}")
 		iterations += 1
+		#print("Step {} Residual: {:10.6g}".format(iterations, residual))
 	#print(f"iterations: {iterations} matriz: {matrix}")	#p")
 	return x
 	# A=matrix
