@@ -14,10 +14,10 @@ def matrix_2(n):
 	B = np.random.rand(n,n)
 	B_inv = np.linalg.inv(B)
 	autovalores_proximos = [10.71, 52.64, 14.86,  30.07, 21.10,  3.05, 20.35, 53.12]
-	autovalores_distantes = [ 11.53, 23.88,  14.41, 20.77, 22.31, 11.78, 21.35, 20.92]
+	autovalores_distantes = [ 11.53, 27.88,  14.41, 10.23, 12.31, 11.78, 11.35, 10.92]
 	D_prox = np.diag(np.array(autovalores_proximos))
 	D_dist = np.diag(np.array(autovalores_distantes))
-	A = np.matmul(np.matmul(B, D_prox),B_inv)
+	A = np.matmul(np.matmul(B, D_dist),B_inv) #monta matriz A com B, B_inv e D_dist ou D_prox (altera-se no codigo)
 	return A
 def main():
 	while True:
@@ -51,7 +51,7 @@ def main():
 	x_true = true_eigenvectors[:,[n-1]]
 	
 	metodo = metodo_potencia(vector_x0, A)
-	A_copy = np.array(A)
+
 	for i in range(1, it_max):
 		x_values.append(i)
 		mu_k = metodo.update_mu_k()
@@ -68,7 +68,7 @@ def main():
 
 	assint_values, assint_values_squared = get_assintotico(lambda1, lambda2, x_values[len(x_values) - 1])
 	
-	print(f"Matrix: \n{A}\nmu_k: {mu_k} x_k:\n{x_k}")
+	print(f"Matrix: \n{A}\nmu_k: {mu_k}\nx_k:\n{x_k}")
 	print(f"l1: {lambda1} l2: {lambda2} l2/l1: {lambda2/lambda1}")
 	if converged:
 		print(f"\nConverged before reaching it_max")
@@ -76,7 +76,6 @@ def main():
 		print(f"\nDid not converge before reaching it_max")
 
 	plot_aproximations(x_values, eigenvalue_error_vector, eigenvector_error_vector, assint_values, assint_values_squared)
-	return A_copy
 	
 if __name__ == '__main__':
 	main()

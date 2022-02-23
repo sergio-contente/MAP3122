@@ -41,7 +41,7 @@ def main():
 	x_values = []
 	eigenvalue_error_vector = []
 	eigenvector_error_vector = []
-	it_max = 100
+	it_max = 69
 
 	#Gera novas matrizes ate que um dos criterios seja atendido
 	while True:
@@ -62,7 +62,6 @@ def main():
 
 	for i in range(1, it_max):
 		x_values.append(i)
-		omega = metodo.optimal_omega(lambda1)
 		x_k = metodo.update_x_k()
 		mu_k = metodo.update_mu_k()
 		eigenvalue_error = get_eigenvalue_error(mu_k, lambda1)
@@ -72,10 +71,11 @@ def main():
 		if eigenvector_error <= epsilon:
 			converged = True
 			break
+
 	assint_values, assint_values_squared = get_assintotico(lambda1, lambda2, x_values[len(x_values) - 1])
 	
 	print(f"Matrix: \n{A}\nmu_k: {mu_k}\nx_k:\n{x_k}")
-	print(f"errovec: {eigenvector_error} l1: {lambda1} l2: {lambda2} l2/l1: {lambda2/lambda1}\nx*:\n{x_true}")
+	print(f"l1: {lambda1} l2: {lambda2} l2/l1: {lambda2/lambda1}\nx*:\n{x_true}")
 	if converged:
 		print(f"\nConverged before reaching it_max")
 	else:
