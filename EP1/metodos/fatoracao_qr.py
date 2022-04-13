@@ -1,5 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
+'''
+Nome: Sergio Magalhães Contente NUSP: 10792087
+Nome: Jonas Gomes de Morais NUSP: 10893805
+'''
 class fatoracao_qr:
 	def __init__(self, A):
 		self.A_0 = np.array(A, copy=True)

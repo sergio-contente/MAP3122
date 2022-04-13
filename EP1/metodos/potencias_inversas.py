@@ -1,6 +1,10 @@
 from math import sqrt
 import numpy as np
 from metodos.common import *
+'''
+Nome: Sergio Magalhães Contente NUSP: 10792087
+Nome: Jonas Gomes de Morais NUSP: 10893805
+'''
 class metodo_potencias_inversas:
 	def __init__(self, x_0, A):
 		self.n = len(A)
@@ -10,7 +14,7 @@ class metodo_potencias_inversas:
 		self.matrix = np.array(A)
 		self.omega = 0.5
 
-	def update_x_k(self):#chamar antes de update_mu_k!!!
+	def update_x_k(self):
 		self.inv_matrix_x_k_product = SOR(self.matrix, self.x_k, self.omega)
 		self.x_k = self.inv_matrix_x_k_product/np.linalg.norm(self.inv_matrix_x_k_product)
 		return np.array(self.x_k)
@@ -49,6 +53,3 @@ class metodo_potencias_inversas:
 				satisfied = False
 				break
 		return satisfied
-
-	def optimal_omega(self, lambda1):
-		return 0.5

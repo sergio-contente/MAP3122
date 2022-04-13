@@ -1,9 +1,12 @@
 from metodos.fatoracao_qr import fatoracao_qr
 from metodos.common import *
-import ex1
+import ex1 as ex1
 import numpy as np
 import matplotlib.pyplot as plt
-
+'''
+Nome: Sergio Magalhães Contente NUSP: 10792087
+Nome: Jonas Gomes de Morais NUSP: 10893805
+'''
 epsilon = 10**(-15)
 
 def matrix_1():
@@ -21,22 +24,42 @@ def matrix_2(n):
 	return A
 def main():
 	n = 8
-	#A = np.array([[5.,-2.],[-2, 8.]])
-	#A = np.array([[6. , -2., -1],[-2., 6., -1.],[-1., -1., 5.]])
-	#A = np.array([[1.,1.],[-3., 1.]])
-	#A = np.array([[3.,-3.],[0.33333, 5.]])
-	#A = matrix_1()
-	A = ex1.main()
+	while True:
+		try:
+			print("SELECIONE A QUAL CASO DO EX3 DESEJA-SE APLICAR O MÉTODO:")
+			modo = int(input("1. Ex 3.1\n2. Ex 3.2\n3. Ex 3.3\n4. Ex 3.4.1 (Matriz 1 do Ex 1)\n5. Ex 3.4.2 (Matriz 2 do Ex 1)\nCaso: "))
+			if modo == 1:
+				A = np.array([[6. , -2., -1],[-2., 6., -1.],[-1., -1., 5.]])
+				break
+			elif modo == 2:
+				A = np.array([[1.,1.],[-3., 1.]])
+				break
+			elif modo == 3:
+				A = np.array([[3.,-3.],[0.33333, 5.]])
+				break
+			elif modo == 4:
+				A = ex1.matrix_1(n)
+				break
+			elif modo == 5:
+				A = ex1.matrix_2(n)
+				break
+			else:
+				raise ValueError("Entrada inválida!")
+		except ValueError as ve:
+			print(ve)
+
 	x_values = []
 	values_errors_vector = []
-	vectores_errors_vector = []
+	vectors_errors_vector = []
+	autovalores = []
 	V_k = np.identity(A.shape[1])
 	A_copy = np.array(A, copy=True)
 	autovalor, autovetor = get_sorted_eigenvalues_eigenvectors(A)
 	A_k = np.array(A, copy=True)
-	it_max = 70
+	it_max = 69
 	symmetrical = is_symmetrical(A_copy)
 	converged = False
+
 	for iteration in range(1, it_max):
 		x_values.append(iteration)
 		qr = fatoracao_qr(A_k)
@@ -50,25 +73,37 @@ def main():
 				if i > j and np.abs(A_k[i][j]) > epsilon:
 					failed_conversion = True
 					break
-			if i == (A_k.shape[0] - 1) and failed_conversion == False:
+			if i == (A_k.shape[0] - 1) and failed_conversion == False: #Se percorreu matriz inteira e nao falhou a conversao, convergiu
 				converged = True
 				print("CONVERGIU!")
-		erro_valor = get_eigenvector_error(A_k[0][0], autovalor[-1])
-		erro_vetor = get_eigenvector_error(V_k, autovetor)
+		erro_valor = get_eigenvalue_error(A_k[0][0], autovalor[-1])
+		erro_vetor = get_eigenvector_error(V_k[-1], autovetor[-1])
 		values_errors_vector.append(erro_valor)
-		vectores_errors_vector.append(erro_vetor)
+		vectors_errors_vector.append(erro_vetor)
 		if converged:
 			break
-	erro_valor = get_eigenvector_error(A_k[0][0], autovalor[-1])
-	erro_vetor = get_eigenvector_error(V_k, autovetor)
-	print(f"Autovalores reais:\n{autovalor}\nAutovalores aproximados:\n{A_k}")
-	print(f"Autovetores reais:\n{autovetor}\nAutovetores aproximados:\n{V_k}")
-	print(f"Erro autovalores: {erro_valor}")
-	print(f"erro_vetor: {erro_vetor}")
+	for i in range(A_k.shape[0]):
+		for j in range(A_k.shape[1]):
+			if i == j:
+				autovalores.append(A_k[i,j])
+				break
+	lambda1 = max(autovalores)
+	index = int(np.where(autovalores == lambda1)[0])
+	x_star = V_k[index]
+	erro_valor = get_eigenvalue_error(lambda1, autovalor[-1])
+	erro_vetor = get_eigenvector_error(x_star, autovetor[-1])
+	print(f"Autovalores reais:\n{autovalor}")
+	print(f"Autovalores aproximados:\n{autovalores}")
+	print(f"Autovetores reais:\n{autovetor}")
+	if symmetrical:
+		print(f"Autovetores aproximados:\n{V_k}")
+	else:
+		print("A matriz nao simetrica nao permite o calculo dos autovetores pelo metodo QR")
+	print(f"Erro do autovalor: {erro_valor}")
+	print(f"Erro do autovetor: {erro_vetor}")
 
 	assint_values, assint_values_squared = get_assintotico(autovalor[-1], autovalor[-2], x_values[len(x_values) - 1])
-	plot_aproximations(x_values, values_errors_vector, vectores_errors_vector, assint_values, assint_values_squared)
-
+	plot_aproximations(x_values, values_errors_vector, vectors_errors_vector, assint_values, assint_values_squared)
 
 if __name__ == '__main__':
 	main()

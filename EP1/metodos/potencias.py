@@ -1,5 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
+'''
+Nome: Sergio Magalhães Contente NUSP: 10792087
+Nome: Jonas Gomes de Morais NUSP: 10893805
+'''
 class metodo_potencia:
     def __init__(self, x_0, A):
         self.x_k = x_0

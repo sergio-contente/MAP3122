@@ -3,31 +3,25 @@ from metodos.potencias_inversas import metodo_potencias_inversas
 from metodos.common import *
 import numpy as np
 import matplotlib.pyplot as plt
-
 from metodos.potencias import metodo_potencia
-
+'''
+Nome: Sergio Magalhães Contente NUSP: 10792087
+Nome: Jonas Gomes de Morais NUSP: 10893805
+'''
 epsilon = 10**(-15)
 
-def potencias(it_max, A, n): #copy from ex1.py
-        converged = False
-        x_values = []
-        eigenvector_error_vector = []
+def potencias(it_max, A, n):
         it_max = 69
         vector_x0 = np.random.rand(n,1)
-        true_eigenvalues, true_eigenvectors = get_sorted_eigenvalues_eigenvectors(A)
-        lambda1 = true_eigenvalues[n-1]
+        true_eigenvectors = get_sorted_eigenvalues_eigenvectors(np.array(A))[1]
         x_true = true_eigenvectors[:,[n-1]]
-        metodo = metodo_potencia(vector_x0, A)
+        metodo = metodo_potencia(vector_x0, np.array(A))
         for i in range(1, it_max):
-            x_values.append(i)
             mu_k = metodo.update_mu_k()
             x_k = metodo.update_x_k()
             eigenvector_error = get_eigenvector_error(x_k, x_true)
             if eigenvector_error <= epsilon:
-                converged = True
                 break
-        if converged:
-            print(f"\nConverged before reaching it_max")
         return mu_k, x_k
 
 def metodo_fatoracao_qr(A):
@@ -36,10 +30,10 @@ def metodo_fatoracao_qr(A):
     autovalores = []
     autovetores = []
     A_k = np.array(A, copy=True)
-    it_max = 700
+    it_max = 69
     symmetrical = is_symmetrical(A_copy)
     converged = False
-    for iteration in range(1, it_max):
+    for i in range(1, it_max):
         qr = fatoracao_qr(A_k)
         Q_k, R_k = qr.get_qr()
         if symmetrical:
@@ -51,15 +45,22 @@ def metodo_fatoracao_qr(A):
                 if i > j and np.abs(A_k[i][j]) > epsilon:
                     failed_conversion = True
                     break
+            if i == (A_k.shape[0] - 1) and failed_conversion == False:
+                converged = True
+                break
+        if converged:
+            break
     for i in range(A_k.shape[0]):
             for j in range(A_k.shape[1]):
-                lambda_value = A_k[i][i]
-                autovalores.append(lambda_value)
-    for i in range(V_k.shape[0]):
+                if i == j:
+                    lambda_value = A_k[i][j]
+                    autovalores.append(lambda_value)
+    for i in range(V_k.shape[1]):
             x_estrela = V_k[:, [i]]
             autovetores.append(x_estrela)
     l1 = max(autovalores)
-    x_star = autovetores[0]
+    index = int(np.where(autovalores == l1)[0])
+    x_star = autovetores[index]
     return l1, x_star
 
 def potencias_inversas(A):
@@ -69,38 +70,17 @@ def potencias_inversas(A):
         metodo = metodo_potencias_inversas(vector_x0, A)
         if metodo.sassenfeld_criteria() or metodo.lines_criteria():
             break
-    converged = False
-    x_values = []
-    eigenvalue_error_vector = []
-    eigenvector_error_vector = []
     it_max = 69
-    true_eigenvalues, true_eigenvectors = get_sorted_eigenvalues_eigenvectors(np.linalg.inv(A))
-    lambda1 = true_eigenvalues[n-1]
-    lambda2 = true_eigenvalues[n-2]
+    true_eigenvectors = get_sorted_eigenvalues_eigenvectors(np.linalg.inv(A))[1]
     x_true = true_eigenvectors[:,[n-1]]
 
     for i in range(1, it_max):
-        x_values.append(i)
-        omega = metodo.optimal_omega(lambda1)
         x_k = metodo.update_x_k()
         mu_k = metodo.update_mu_k()
-        eigenvalue_error = get_eigenvalue_error(mu_k, lambda1)
         eigenvector_error = get_eigenvector_error(x_k, x_true)
         if eigenvector_error <= epsilon:
-            converged = True
             break
     return mu_k, x_k
-
-def grau_centralidade(x_star, lambda1, adjacencia):
-    central_vertices = []
-    x_star = np.transpose(x_star)
-    for i in range(adjacencia.shape[0]):
-        sum = 0
-        for j in range(adjacencia.shape[1]):
-            sum += x_star[0][j]*adjacencia[i][j]/lambda1
-        central_vertices.append(sum)
-    max_centralidade = max(central_vertices)
-    return central_vertices.index(max_centralidade)
 
 
 def main():
@@ -139,13 +119,38 @@ def main():
     x_star_orig = eigenvectors[:, [15]]
     x_star_orig = x_star_orig/np.linalg.norm(x_star_orig)
     print(f"Matriz A = \n {A}")    
-    #l1, x_star= potencias(70, A, len(A))
-    l1, x_star= metodo_fatoracao_qr(A)
-    #l1, x_star = potencias_inversas(A)
-    vertice_max_central = grau_centralidade(x_star, l1, A)
-    #print(f"gmed_1 < lambda1 < gmax1:\n{grau_med1} < {l1} < {grau_max1}")
-    print(f"gmed_2 < lambda1 < gmax2:\n{grau_med2} < {l1} < {grau_max2}")
-    print(f"Vértice com maior grau de centralidade de autovetor: {vertice_max_central}")
+    if modo == 1:
+        l1, x_star= potencias(70, A, len(A))
+        vertice_max_central = int(np.where(x_star == max(x_star))[0])
+        print(f"Com o metodo das potencias (Ex 1):")
+        print(f"gmed < lambda1 < gmax:\n{grau_med1} < {l1} < {grau_max1}\nx*:\n{x_star}")
+        print(f"Vértice com maior grau de centralidade de autovetor: {vertice_max_central}\n")
+        # l1, x_star = potencias_inversas(A)
+        # vertice_max_central = int(np.where(x_star == max(x_star))[0])
+        # print(f"Com o metodo das potencias inversas (Ex 2):")
+        # print(f"gmed_2 < lambda1 < gmax2:\n{grau_med2} < {l1} < {grau_max2}\nx*:\n{x_star}")
+        # print(f"Vértice com maior grau de centralidade de autovetor: {vertice_max_central}\n")
+        l1, x_star= metodo_fatoracao_qr(A)
+        vertice_max_central = int(np.where(x_star == max(x_star))[0])
+        print(f"Com o metodo da fatoracao QR (Ex 3):")
+        print(f"gmed_2 < lambda1 < gmax2:\n{grau_med2} < {l1} < {grau_max2}\nx*:\n{x_star}")
+        print(f"Vértice com maior grau de centralidade de autovetor: {vertice_max_central}")
+    else:
+        l1, x_star= potencias(70, A, len(A))
+        vertice_max_central = int(np.where(x_star == max(x_star))[0])
+        print(f"Com o metodo das potencias (Ex 1):")
+        print(f"gmed < lambda1 < gmax:\n{grau_med2} < {l1} < {grau_max2}\nx*:\n{x_star}")
+        print(f"Vértice com maior grau de centralidade de autovetor: {vertice_max_central}\n")
+        # l1, x_star = potencias_inversas(A)
+        # vertice_max_central = int(np.where(x_star == max(x_star))[0])
+        # print(f"Com o metodo das potencias inversas (Ex 2):")
+        # print(f"gmed_2 < lambda1 < gmax2:\n{grau_med2} < {l1} < {grau_max2}\nx*:\n{x_star}")
+        # print(f"Vértice com maior grau de centralidade de autovetor: {vertice_max_central}\n")
+        l1, x_star= metodo_fatoracao_qr(A)
+        vertice_max_central = int(np.where(x_star == max(x_star))[0])
+        print(f"Com o metodo da fatoracao QR (Ex 3):")
+        print(f"gmed < lambda1 < gmax:\n{grau_med2} < {l1} < {grau_max2}\nx*:\n{x_star}")
+        print(f"Vértice com maior grau de centralidade de autovetor: {vertice_max_central}")
 
 if __name__ == '__main__':
     main()

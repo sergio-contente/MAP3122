@@ -1,6 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+'''
+Nome: Sergio Magalhães Contente NUSP: 10792087
+Nome: Jonas Gomes de Morais NUSP: 10893805
+'''
 def get_assintotico(lambda1, lambda2, it_max):
 	vector = []
 	squared = []
