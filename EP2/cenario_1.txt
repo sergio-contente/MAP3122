@@ -1,14 +1,28 @@
-Par�metros:
+Parâmetros:
 N        = 10000
 L        = 10
-M        = 50
+M        = 25
 K        = 1.00
 sigma    = 0.01
 T        = 1.00
 r        = 0.01
 S0       = 1.00
 t        = 0.00
-Pre�o da op��o:
-V        = 10.77
+Preço da opção:
+V        = 10.74
+
+
+Parâmetros:
+N        = 10000
+L        = 10
+M        = 100
+K        = 1.00
+sigma    = 0.02
+T        = 1.00
+r        = 0.01
+S0       = 1.00
+t        = 0.50
+Preço da opção:
+V        = 13.90
 
 

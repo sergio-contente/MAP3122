@@ -1,7 +1,7 @@
 import statistics
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import norm
+import time
 
 def get_tau_analitico(t, T):
     tau = T-t
@@ -30,23 +30,17 @@ def get_u_analitico_normal(sigma, K, M, N, T, L):
             else:
                 d1 = (x_i + sigma**2 * tau_j)/(sigma * np.sqrt(tau_j))
                 d2 = x_i/(sigma * np.sqrt(tau_j))
-                # N_d1 = statistics.NormalDist().cdf(d1)
-                # N_d2 = statistics.NormalDist().cdf(d2)
-                N_d1 = norm.cdf(d1)
-                N_d2 = norm.cdf(d2)
+                N_d1 = statistics.NormalDist().cdf(d1)
+                N_d2 = statistics.NormalDist().cdf(d2)
                 u_analitico[i][j] = K * np.e**(x_i+sigma**2 * tau_j/2) * N_d1 - K * N_d2
                 print(f"N_d1 = {N_d1} e N_d2 = {N_d2} e u_anal_ij = {u_analitico[i][j]}")
     return u_analitico
-
-# def get_u_analitico(K, L, sigma, tau):  
-#     u_analitico = K * np.e**(L + sigma**2 * tau/2)
-#     return u_analitico
 
 def get_S_analitico(x, tau, sigma, K, r):
     S = K * np.e**(x - (r - sigma**2 / 2) * tau)
     return S
 
-def get_V_analitico(r, T, t, sigma, S, K, M, N, L): # Fazer com u da dist normal ou outro metodo analitico?
+def get_V_analitico(r, T, t, sigma, S, K, M, N, L):
     u = get_u_analitico_normal(sigma, K, M, N, T, L)
     V = u * np.e**(-r * (T-t))
     return V
@@ -94,8 +88,8 @@ def get_V_dado_S(T, M, L, N, t, S, K, r, sigma, V):
     tau = get_tau_analitico(t, T)
     x = get_x_analitico(S, K, r, sigma, tau)
 
-    indice_i = round((x + L)/delta_x)
-    indice_j = round(tau/delta_tau)
+    indice_i = int(round((x + L)/delta_x))
+    indice_j = int(round(tau/delta_tau))
 
     x_i = update_x_i(indice_i, L, N)
     x_i_prox = update_x_i(indice_i+1, L, N)
@@ -141,7 +135,7 @@ def iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar=1):
             u[1:-1, j+1] = u_ij_vetor + (delta_tau/delta_x**2) * (sigma**2/2) * (u_iant_j_vetor -2 * u_ij_vetor + u_iprox_j_vetor)
     return u
 
-def gera_lucro(V, t, N, M, L, sigma, K, T, r, valor_comprado, custo_inicial):
+def gera_lucro(V, t, N, M, L, sigma, K, T, r, qtd_comprada, custo_inicial):
     k       = 100
     S_min   = K/2
     S_max   = 3*K/2   
@@ -150,7 +144,7 @@ def gera_lucro(V, t, N, M, L, sigma, K, T, r, valor_comprado, custo_inicial):
     S_list  = k_i*delta_S+S_min 
     cenarios = []
     for S in S_list:
-        resultado = get_V_dado_S(T, M, L, N, t, S, K, r, sigma, V)[1]*valor_comprado - custo_inicial
+        resultado = get_V_dado_S(T, M, L, N, t, S, K, r, sigma, V)[1]*qtd_comprada - custo_inicial
         cenarios.append(resultado)
     return cenarios, S_list
 

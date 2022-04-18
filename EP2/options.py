@@ -1,15 +1,5 @@
 from metodos import *
 
-def option(N, L, sigma, K, T, r, t, S0, vetorizar=True):
-
-    #u_ij = calcula_u(N, M, L, sigma, K, T, vetorizar)
-    u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
-    print(u_ij[9000][13])
-    V_ij = get_V_ij(N, M, T, r, u_ij)
-    # u_analitico = get_u_analitico_normal(sigma, K, M, N, T, L)
-    V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
-    print(f"V no presente = {str(V_presente_aprox)} V no presente interpolado = {str(V_presente_interpol)}")
-
 def cenario_1(vetorizar):
     N = 10000    
     L = 10       
@@ -17,7 +7,7 @@ def cenario_1(vetorizar):
     K = 1.0      
     T = 1.0      
     r = 0.01  
-    M = 50 # condicao de estabilidade
+    M = round((sigma**2/(2*L/N)**2)*T) # condicao de estabilidade
        
     arquivo = open("cenario_1.txt", "w")
 
@@ -35,24 +25,28 @@ def cenario_1(vetorizar):
     escreve_arquivo(arquivo, N, L, M, K, sigma, T, r, S0, t, precificacao)
     escreve_terminal( N, L, M, K, sigma, T, r, S0, t, precificacao)
 
+    print("Precificação da opção de compra: R${:.2f}".format(precificacao * 1000))
+
     '''
         Exercício 2
     '''
-   
+    M = 50 # condicao de estabilidade
     #Grafico 1 - t = 0.5
     t = 0.5
-    valor_comprado = 1000
+    qtd_comprada = 1000
     u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
     V_ij = get_V_ij(N, M, T, r, u_ij)
     V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
     precificacao = V_presente_interpol * 1000
     gasto_inicial = precificacao
-    cenarios, S_list = gera_lucro(V_ij, t, N, M, L, sigma, K, T, r, valor_comprado, gasto_inicial)
+    print("Precificação da opção de compra: R${:.2f}".format(precificacao * 1000))
+
+    cenarios, S_list = gera_lucro(V_ij, t, N, M, L, sigma, K, T, r, qtd_comprada, gasto_inicial)
     escreve_grafico(S_list, cenarios, "Lucro e Prejuízo em t = 6 meses", "cenario_1_ex_2_g1.png")
 
     #Grafico 2 - t = 0.25
     t = 0.25
-    valor_comprado = 1000
+    qtd_comprada = 1000
     u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
     V_ij = get_V_ij(N, M, T, r, u_ij)
     V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
@@ -63,7 +57,7 @@ def cenario_1(vetorizar):
 
     #Grafico 3 - t = 0.75
     t = 0.75
-    valor_comprado = 1000
+    qtd_comprada = 1000
     u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
     V_ij = get_V_ij(N, M, T, r, u_ij)
     V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
@@ -74,7 +68,7 @@ def cenario_1(vetorizar):
     
     #Grafico 4 - t = 0.0
     t = 0.0
-    valor_comprado = 1000
+    qtd_comprada = 1000
     u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
     V_ij = get_V_ij(N, M, T, r, u_ij)
     V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
@@ -85,7 +79,7 @@ def cenario_1(vetorizar):
 
     #Grafico 5 - t = T
     t = T
-    valor_comprado = 1000
+    qtd_comprada = 1000
     u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
     V_ij = get_V_ij(N, M, T, r, u_ij)
     V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
@@ -98,30 +92,32 @@ def cenario_1(vetorizar):
     Exercicio 3
     '''
     sigma = 0.02
-
+    M = round((sigma**2/(2*L/N)**2)*T) # condicao de estabilidade
     t = 0.5    
 
     u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
     V_ij = get_V_ij(N, M, T, r, u_ij)
     V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
     precificacao = V_presente_interpol * 1000
+    print("Precificação da opção de compra: R${:.2f}".format(precificacao * 1000))
+
     escreve_arquivo(arquivo, N, L, M, K, sigma, T, r, S0, t, precificacao)
     escreve_terminal( N, L, M, K, sigma, T, r, S0, t, precificacao)
 
     #Grafico 1 - t = 0.5
     t = 0.5
-    valor_comprado = 1000
+    qtd_comprada = 1000
     u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
     V_ij = get_V_ij(N, M, T, r, u_ij)
     V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
     precificacao = V_presente_interpol * 1000
     gasto_inicial = precificacao
-    cenarios, S_list = gera_lucro(V_ij, t, N, M, L, sigma, K, T, r, valor_comprado, gasto_inicial)
+    cenarios, S_list = gera_lucro(V_ij, t, N, M, L, sigma, K, T, r, qtd_comprada, gasto_inicial)
     escreve_grafico(S_list, cenarios, "Lucro e Prejuízo em t = 6 meses", "cenario_1_ex_3_g1.png")
 
     #Grafico 2 - t = 0.25
     t = 0.25
-    valor_comprado = 1000
+    qtd_comprada = 1000
     u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
     V_ij = get_V_ij(N, M, T, r, u_ij)
     V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
@@ -132,7 +128,7 @@ def cenario_1(vetorizar):
 
     #Grafico 3 - t = 0.75
     t = 0.75
-    valor_comprado = 1000
+    qtd_comprada = 1000
     u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
     V_ij = get_V_ij(N, M, T, r, u_ij)
     V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
@@ -143,7 +139,7 @@ def cenario_1(vetorizar):
     
     #Grafico 4 - t = 0.0
     t = 0.0
-    valor_comprado = 1000
+    qtd_comprada = 1000
     u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
     V_ij = get_V_ij(N, M, T, r, u_ij)
     V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
@@ -154,7 +150,7 @@ def cenario_1(vetorizar):
 
     #Grafico 5 - t = T
     t = T
-    valor_comprado = 1000
+    qtd_comprada = 1000
     u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
     V_ij = get_V_ij(N, M, T, r, u_ij)
     V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
@@ -168,21 +164,24 @@ def cenario_1(vetorizar):
     '''
     r = 0.1
     sigma = 0.1
+    M = round((sigma**2/(2*L/N)**2)*T) # condicao de estabilidade
 
     #Grafico 1 - t = 0.5
     t = 0.5
-    valor_comprado = 1000
+    qtd_comprada = 1000
     u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
     V_ij = get_V_ij(N, M, T, r, u_ij)
     V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
     precificacao = V_presente_interpol * 1000
     gasto_inicial = precificacao
-    cenarios, S_list = gera_lucro(V_ij, t, N, M, L, sigma, K, T, r, valor_comprado, gasto_inicial)
+    print("Precificação da opção de compra: R${:.2f}".format(precificacao * 1000))
+
+    cenarios, S_list = gera_lucro(V_ij, t, N, M, L, sigma, K, T, r, qtd_comprada, gasto_inicial)
     escreve_grafico(S_list, cenarios, "Lucro e Prejuízo em t = 6 meses", "cenario_1_ex_4_g1.png")
 
     #Grafico 2 - t = 0.25
     t = 0.25
-    valor_comprado = 1000
+    qtd_comprada = 1000
     u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
     V_ij = get_V_ij(N, M, T, r, u_ij)
     V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
@@ -193,7 +192,7 @@ def cenario_1(vetorizar):
 
     #Grafico 3 - t = 0.75
     t = 0.75
-    valor_comprado = 1000
+    qtd_comprada = 1000
     u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
     V_ij = get_V_ij(N, M, T, r, u_ij)
     V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
@@ -204,7 +203,7 @@ def cenario_1(vetorizar):
     
     #Grafico 4 - t = 0.0
     t = 0.0
-    valor_comprado = 1000
+    qtd_comprada = 1000
     u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
     V_ij = get_V_ij(N, M, T, r, u_ij)
     V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
@@ -215,7 +214,7 @@ def cenario_1(vetorizar):
 
     #Grafico 5 - t = T
     t = T
-    valor_comprado = 1000
+    qtd_comprada = 1000
     u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
     V_ij = get_V_ij(N, M, T, r, u_ij)
     V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
@@ -228,34 +227,54 @@ def cenario_1(vetorizar):
     arquivo.close()
     return
 def cenario_2(vetorizar):
+    arquivo = open("cenario_2.txt", "w")
     N = 10000
-    L = 10
-    sigma = 0.1692
-    K = 5.7
-    T = 0.25
-    r = 0.1075
+    L       = 10
+    K       = 5.7
+    sigma   = 0.1692
+    T       = 3/12
+    r       = 0.1075
     S0 = 5.6376
-    valor = 100000
-    M = 50 # condicao de estabilidade
-    
+    t = 0
+    M = round((sigma**2/(2*L/N)**2)*T) # condicao de estabilidade
+    qtd_comprada = 100000
+
     u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
     V_ij = get_V_ij(N, M, T, r, u_ij)
     V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
-    print(f"V no presente = {str(V_presente_aprox)} V no presente interpolado = {str(V_presente_interpol)}")
-    precificacao = V_presente_interpol * valor
-    print(f"Precificacao/premio: {precificacao}")
+    precificacao_dezembro = V_presente_interpol * qtd_comprada + S0 * qtd_comprada
+    gasto_inicial = precificacao_dezembro
+    premio = V_presente_interpol * qtd_comprada
+    print(f"Premio: {premio}")
+    cenarios, S_list = gera_lucro(V_ij, t, N, M, L, sigma, K, T, r, qtd_comprada, gasto_inicial)
+    escreve_grafico(S_list, cenarios, "Lucro e Prejuízo em t = 0 meses", "cenario_2_g1.png")
+    escreve_terminal( N, L, M, K, sigma, T, r, S0, t, precificacao_dezembro)
 
-    custo_total = precificacao + valor*S0
-    print(f"Custo total: {custo_total}")
+    # Sabendo o valor do dolar em 1 de janeiro de 2022
+    S = 5.578
+    t = 1/12
+    u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
+    V_ij = get_V_ij(N, M, T, r, u_ij)
+    V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
+    precificacao_janeiro = V_presente_interpol * qtd_comprada 
+    escreve_arquivo(arquivo, N, L, M, K, sigma, T, r, S, t, precificacao_janeiro)
+    saldo = (precificacao_janeiro-precificacao_dezembro)
+    print("Prejuízo da compra: R${:.2f}".format(saldo))
 
-    St = 5.1604718519
-    valor_total = St * valor
+    # Sabendo o valor do dolar em 1 de marco de 2022
+    S = 5.1604718519
+    t = 3/12
+    u_ij = iterador_u_ij(M, N, L, sigma, K, T, r, vetorizar)
+    V_ij = get_V_ij(N, M, T, r, u_ij)
+    V_presente_aprox, V_presente_interpol = get_V_dado_S(T, M, L, N, 0, S0, K, r, sigma, V_ij)
+    precificacao_marco = V_presente_interpol * qtd_comprada 
+    escreve_arquivo(arquivo, N, L, M, K, sigma, T, r, S, t, precificacao_marco)
+    saldo = (precificacao_marco-precificacao_dezembro)
+    print("Prejuízo da compra: R${:.2f}".format(saldo))
 
-    lucro = valor_total - custo_total
-    print(f"Lucro em 1 de Marco com dolar a R$ 5,16: {lucro}")
+    arquivo.close()
+    return 
 
-def cenario_3():
-    pass
 
 def escreve_arquivo(arquivo, N, L, M, K, sigma, T, r, S, t, V):
     arquivo.write("Parâmetros:\n")
@@ -299,13 +318,32 @@ def escreve_grafico(S_list, cenarios, titulo, nome):
     plt.savefig(nome)
     plt.show()
 
+def compara_tempos_vetorizar():
+    N = 10000    
+    L = 10       
+    sigma = 0.01
+    K = 1.0      
+    T = 1.0      
+    r = 0.01  
+    M = round((sigma**2/(2*L/N)**2)*T)
+    inicio = time.process_time()
+    u = iterador_u_ij(M, N, L, sigma, K, T, r, False)
+    fim = time.process_time()
+    sem_vetorizar = (fim - inicio)*1000
+    inicio = time.process_time()
+    u = iterador_u_ij(M, N, L, sigma, K, T, r, True)
+    fim = time.process_time()
+    vetorizando = (fim - inicio)*1000
+    print("Tempo de execução do método sem vetorização {:.2f} ms".format(sem_vetorizar))
+    print("Tempo de execução do método com vetorização {:.2f} ms".format(vetorizando))
+    return
+
 def main():
- 
+    compara_tempos_vetorizar()
 
     print("#####    Escolha um cenário  #######")
     print("##### (1) Cenário fictício   #######")
     print("##### (2) Cenário câmbio     #######")
-    print("##### (3) Cenário real       #######")
     print("(###################################")
     cenario = int(input("Cenário: "))
     print("#####    Deseja vetorizar?   #######")
@@ -318,10 +356,10 @@ def main():
         cenario_1(vetorizar)
     elif cenario == 2:
         cenario_2(vetorizar)
-    elif cenario == 3:
-        cenario_3(vetorizar)
     else:
         print("Entrada inválida!")
+
+    
 
 if __name__ == '__main__':
     try:
